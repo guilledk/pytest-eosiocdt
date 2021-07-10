@@ -21,6 +21,9 @@ EOSIO_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 
 def asset_from_decimal(dec: Decimal, precision: int, sym: str):
+    """Return a string with the standard asset representation
+    """
+
     result = str(dec)
     pindex = result.index('.')
     return f'{result[:pindex + 1 + precision]} {sym}'
@@ -39,32 +42,31 @@ def eosio_parse_date(date: str) -> datetime:
     return datetime.strptime(date, EOSIO_DATE_FORMAT)
 
 
-def str_to_hex(c):
-    hex_data = hexlify(bytearray(c, 'ascii')).decode()
-    return int(hex_data, 16)
-
-
-def char_subtraction(a, b, add):
-    x = str_to_hex(a)
-    y = str_to_hex(b)
-    ans = str((x - y) + add)
-    if len(ans) % 2 == 1:
-        ans = '0' + ans
-    return int(ans)
-
-
-def char_to_symbol(c):
-    ''' '''
-    if c >= 'a' and c <= 'z':
-        return char_subtraction(c, 'a', 6)
-    if c >= '1' and c <= '5':
-        return char_subtraction(c, '1', 1)
-    return 0
-
-
 def string_to_name(s: str) -> int:
     """Convert valid eosio name to its number repr
     """
+
+    def str_to_hex(c):
+        hex_data = hexlify(bytearray(c, 'ascii')).decode()
+        return int(hex_data, 16)
+
+    def char_subtraction(a, b, add):
+
+        x = str_to_hex(a)
+        y = str_to_hex(b)
+        ans = str((x - y) + add)
+        if len(ans) % 2 == 1:
+            ans = '0' + ans
+        return int(ans)
+
+    def char_to_symbol(c):
+
+        if c >= 'a' and c <= 'z':
+            return char_subtraction(c, 'a', 6)
+        if c >= '1' and c <= '5':
+            return char_subtraction(c, '1', 1)
+        return 0
+
     i = 0
     name = 0
     while i < len(s) :

@@ -8,7 +8,7 @@ import logging
 import tarfile
 import subprocess
 
-from typing import Optional, List, Dict
+from typing import Optional, Tuple, List, Dict
 from pathlib import Path
 from difflib import SequenceMatcher
 from subprocess import PIPE, STDOUT
@@ -51,6 +51,10 @@ def pytest_addoption(parser):
 
 class EOSIOTestSession:
 
+    """
+    Example docstring
+    """
+
     def __init__(
         self,
         vtestnet,  # vtestnet container
@@ -83,7 +87,12 @@ class EOSIOTestSession:
 
         self._sys_token_init = False
 
-    def run(self, *args, **kwargs):
+    def run(self, *args, **kwargs) -> Tuple[int, str]:
+        """Helper function, passes arguments directly through to ``vtestnet`` 
+        docker container's ``exec_run``, returns exit code, and utf-8 decoded
+        output.
+        """
+
         ec, out = self.vtestnet.exec_run(*args, **kwargs)
         return ec, out.decode('utf-8')
 
